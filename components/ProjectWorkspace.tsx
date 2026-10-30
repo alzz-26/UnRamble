@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import AppHeader from "./AppHeader";
 import ConfirmButton from "./ConfirmButton";
+import DayNudge from "./DayNudge";
 import FormatPicker from "./FormatPicker";
 import ReportView, { changedParts, partLabel } from "./ReportView";
 import { callApi, downloadReport, PLACEHOLDER_LOGO, readImage } from "@/lib/client";
@@ -240,6 +241,7 @@ export default function ProjectWorkspace({ id }: { id: string }) {
               {p.entries.length} notes{pending.length > 0 && latest ? ` · ${pending.length} new` : ""}
             </span>
           </div>
+          <DayNudge project={p} onSave={(reminder) => update((cur) => ({ ...cur, reminder }))} />
           <Composer onAdd={(date, text) => addEntry(date, text)} />
           <button className="btn-primary btn-wide" onClick={() => runAgent()} disabled={!!busy || p.entries.length === 0 || (!!latest && pending.length === 0)}>
             {busy === "agent" || busy === "full" ? status : agentLabel}

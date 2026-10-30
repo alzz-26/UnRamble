@@ -395,3 +395,18 @@ kbd { font-family: var(--mono); font-size: 11.5px; background: var(--accent-soft
 .activity > li.act-on .act-head b::before { content: "● "; color: var(--accent-text); }
 .tab-on { border-bottom-width: 3px; }
 .pane h2, .revise h2 { font-family: var(--mono); font-weight: 600; letter-spacing: 0.06em; }
+
+/* Daily nudge above the composer */
+.nudge { border: 1px solid var(--warn-line); background: var(--warn-bg); border-radius: 12px; padding: 8px 12px; font-size: 13.5px; }
+.nudge-done { border-color: var(--accent-line); background: var(--accent-soft); }
+.nudge-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nudge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rec); flex-shrink: 0; animation: pulse 1.6s ease-in-out infinite; }
+.nudge-done .nudge-dot { background: var(--accent-text); animation: none; }
+.nudge-text { flex: 1; font-weight: 600; color: var(--ink); }
+.nudge-streak { font-family: var(--mono); font-weight: 600; color: var(--accent-text); }
+.nudge-panel { margin-top: 10px; display: flex; flex-direction: column; gap: 10px; }
+.nudge-fields { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.nudge-check { display: flex; align-items: center; gap: 6px; color: var(--muted); cursor: pointer; }
+.nudge-panel a.btn-secondary { text-decoration: none; font-size: 13.5px; }
+.nudge-note { margin: 0; }
+.pill-warn { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid var(--warn-line); }

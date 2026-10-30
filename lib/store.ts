@@ -34,6 +34,7 @@ export type Project = {
   entries: Entry[];
   versions: Version[]; // oldest first; the last one is current
   sample?: boolean; // the ready-made example project
+  reminder?: { time: string; weekdays: boolean }; // the daily reminder last added to a calendar
 };
 
 // Storage keys keep the app's original name so projects saved before the rename still load.

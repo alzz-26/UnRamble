@@ -7,6 +7,7 @@ import AppHeader from "./AppHeader";
 import ConfirmButton from "./ConfirmButton";
 import FormatPicker from "./FormatPicker";
 import { PRESET_FORMATS, type ReportFormat } from "@/lib/formats";
+import { loggedToday, streak } from "@/lib/reminder";
 import { createSampleProject, ensureDefaultSample, isSample } from "@/lib/sample";
 import { EMPTY_META, type Meta } from "@/lib/schema";
 import {
@@ -135,6 +136,7 @@ function ProjectCard({ p }: { p: Project }) {
             <b>{p.versions.length}</b> version{p.versions.length === 1 ? "" : "s"}
           </span>
           {pending > 0 && p.versions.length > 0 && <span className="pill">{pending} new</span>}
+          {!isSample(p) && (loggedToday(p) ? <span className="pill">Logged today · {streak(p)}-day streak</span> : <span className="pill pill-warn">Not logged today</span>)}
         </div>
         <p className="muted small">Updated {new Date(p.updatedAt).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}</p>
       </Link>
