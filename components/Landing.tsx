@@ -15,7 +15,7 @@ const PERKS = [
   ["It won't invent your marks", "No data, no number. You get a marker instead of a fabrication."],
   ["It remembers every version", "Undo is a list, not a prayer."],
   ["Fix it by talking", "“Make the methodology shorter.” Done. Nothing else moved."],
-  ["Viva warm-up", "Likely examiner questions about your own work, ready to rehearse."],
+  ["It nudges you daily", "A reminder in your own calendar and a streak, so week 2 isn't a blur by Friday."],
   ["Your format, learned", "Upload last semester's .docx. It copies headings, font, margins."],
 ];
 
@@ -26,7 +26,8 @@ const FORMATS = [
 ];
 
 const FAQ = [
-  ["Account?", "None. Projects live in your browser; export a file to move them."],
+  ["Account?", "None yet. Projects live in your browser; export a file to move them. Sign-in and sync are next."],
+  ["Why not just ask a chatbot?", "A chatbot writes a report when you ask. Unramble keeps one while the work happens: dated notes, edits instead of rewrites, your exact format."],
   ["Which AI?", "Gemini on the free tier. The demo needs no key."],
   ["Does it hallucinate?", "It's instructed not to, and it flags missing facts instead. Read before you submit."],
   ["Do I have to talk?", "Typing works. Talking is just faster, and that's the whole point."],
