@@ -457,9 +457,13 @@ function Composer({ onAdd }: { onAdd: (date: string, text: string) => void }) {
   const [text, setText] = useState("");
   return (
     <div className="composer">
-      <p className="hint">
-        <kbd>Hold your Wispr key</kbd> and say what you did. Rambling is fine.
-      </p>
+      <div className="mic-head">
+        <MicIcon />
+        <div>
+          <p className="mic-title">Today&apos;s log</p>
+          <p className="mic-sub">hold Wispr key · talk · release</p>
+        </div>
+      </div>
       <textarea
         id="notes"
         className="notes notes-short"
@@ -570,6 +574,18 @@ function GapQuestion({ section, question, disabled, onAnswer }: { section: strin
         </button>
       </div>
     </div>
+  );
+}
+
+function MicIcon() {
+  return (
+    <span className="mic-badge" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+        <rect x="9" y="3" width="6" height="11" rx="3" />
+        <path d="M5 11a7 7 0 0 0 14 0" />
+        <path d="M12 18v3" />
+      </svg>
+    </span>
   );
 }
 
