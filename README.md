@@ -5,7 +5,8 @@
 Built for **No Hands: The Wispr Challenge** (Builders track).
 
 - **Try it without a key:** `/demo` (sample notes, a saved report, a saved revision)
-- **Quick report:** `/`: paste or dictate notes, pick a format, generate. No setup.
+- **Landing page:** `/`, with links into the app.
+- **Quick report:** `/quick`: paste or dictate notes, pick a format, generate. No setup.
 - **My projects:** `/projects`: one project per report (internship, lab course, capstone), each with its own format, a dated daily log, every version, and an agent that updates only what your new notes change. "Add a sample project" shows it with no typing.
 - Needs a free `GEMINI_API_KEY` on the server for live generation.
 

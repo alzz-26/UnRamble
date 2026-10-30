@@ -190,7 +190,7 @@ export default function Builder({ demo = false }: { demo?: boolean }) {
             <>
               <span className="chip chip-demo">Demo · saved example, no API call</span>
               <Link className="chip chip-link" href="/">
-                ← Back to the app
+                ← Back home
               </Link>
             </>
           ) : undefined
