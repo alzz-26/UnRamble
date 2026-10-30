@@ -36,6 +36,7 @@ export type Project = {
   sample?: boolean; // the ready-made example project
 };
 
+// Storage keys keep the app's original name so projects saved before the rename still load.
 const KEY = "report-builder:projects:v1";
 const MAX_VERSIONS = 30;
 const EVENT = "report-builder:projects-changed";
@@ -118,7 +119,7 @@ export function deleteProject(id: string) {
 
 export function importProject(json: string): Project {
   const p = JSON.parse(json) as Project;
-  if (!p || !Array.isArray(p.entries) || !p.format) throw new Error("That file isn't a Report Builder project.");
+  if (!p || !Array.isArray(p.entries) || !p.format) throw new Error("That file isn't an Unramble project.");
   const copy = { ...p, id: uid(), updatedAt: now() };
   writeAll([copy, ...readAll()]);
   return copy;
@@ -129,7 +130,7 @@ export function exportProject(p: Project) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${p.name.replace(/[^\w-]+/g, "_")}.reportbuilder.json`;
+  a.download = `${p.name.replace(/[^\w-]+/g, "_")}.unramble.json`;
   a.click();
   URL.revokeObjectURL(url);
 }

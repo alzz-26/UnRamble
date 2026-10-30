@@ -19,7 +19,7 @@ export default function AppHeader({ subtitle, right }: { subtitle?: string; righ
           ¶
         </span>
         <div>
-          <h1>Report Builder</h1>
+          <h1>Unramble</h1>
           <p className="muted">{subtitle ?? "Say what you did. Get the report in your department's format."}</p>
         </div>
       </Link>

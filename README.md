@@ -1,6 +1,6 @@
-# Report Builder
+# Unramble
 
-One place for every report you owe. Speak messy notes each day; an agent keeps the report in your department's exact format up to date, and you download it as a Word file.
+**Ramble all week. Submit on Friday.** One place for every report you owe. Speak messy notes each day; an agent keeps the report in your department's exact format up to date, and you download it as a Word file.
 
 Built for **No Hands: The Wispr Challenge** (Builders track).
 
