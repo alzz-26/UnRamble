@@ -8,7 +8,7 @@ import ReportView, { changedParts, partLabel } from "./ReportView";
 import FormatPicker from "./FormatPicker";
 import { EMPTY_META, type AnyReport, type Meta } from "@/lib/schema";
 import { DEMO_META, DEMO_NOTES, DEMO_REPORT, DEMO_REVISION, demoRevised } from "@/lib/demoData";
-import { PRESET_FORMATS, VIT_INTERNSHIP, type ReportFormat } from "@/lib/formats";
+import { PRESET_FORMATS, INTERNSHIP_REPORT, upgradeFormat, type ReportFormat } from "@/lib/formats";
 import { callApi, downloadReport, PLACEHOLDER_LOGO, readImage } from "@/lib/client";
 import { createProject, now, saveProject, today, uid } from "@/lib/store";
 import type { Certificate } from "@/lib/exportDocx";
@@ -46,7 +46,7 @@ export default function Builder({ demo = false }: { demo?: boolean }) {
   const router = useRouter();
   const [meta, setMeta] = useState<Meta>(demo ? DEMO_META : EMPTY_META);
   const [notes, setNotes] = useState(demo ? DEMO_NOTES : "");
-  const [format, setFormat] = useState<ReportFormat>(VIT_INTERNSHIP);
+  const [format, setFormat] = useState<ReportFormat>(INTERNSHIP_REPORT);
   const [report, setReport] = useState<AnyReport | null>(null);
   const [changed, setChanged] = useState<string[]>([]);
   const [lastChanges, setLastChanges] = useState<string[]>([]);
@@ -70,7 +70,7 @@ export default function Builder({ demo = false }: { demo?: boolean }) {
     if (saved) {
       setNotes(saved.notes ?? "");
       setMeta({ ...EMPTY_META, ...saved.meta });
-      const f = saved.format ?? PRESET_FORMATS.find((x) => x.id === saved.formatId);
+      const f = saved.format ? upgradeFormat(saved.format) : PRESET_FORMATS.find((x) => x.id === saved.formatId);
       if (f) setFormat(f);
     }
     setHydrated(true);
@@ -249,7 +249,7 @@ export default function Builder({ demo = false }: { demo?: boolean }) {
                   <input value={meta[key]} onChange={(e) => setMeta({ ...meta, [key]: e.target.value })} />
                 </label>
               ))}
-              {format.kind === "vit-internship" && (
+              {format.kind === "internship" && (
                 <label>
                   <span>Internship certificate (image, optional)</span>
                   <input type="file" accept="image/png,image/jpeg" onChange={async (e) => setCertificate(e.target.files?.[0] ? await readImage(e.target.files[0]) : null)} />

@@ -84,13 +84,13 @@ export const EMPTY_META: Meta = {
   regNo: "",
   degree: "BACHELOR OF TECHNOLOGY",
   branch: "COMPUTER SCIENCE AND ENGINEERING",
-  school: "SCHOOL OF COMPUTING SCIENCE AND ENGINEERING",
-  university: "VIT BHOPAL UNIVERSITY",
+  school: "SCHOOL OF COMPUTER SCIENCE AND ENGINEERING",
+  university: "XYZ COLLEGE",
   academicYear: "2026 – 2027",
   organisation: "",
   duration: "",
   guideName: "",
-  guideDept: "SCOPE",
+  guideDept: "CSE DEPARTMENT",
 };
 
 // The sections a revision can touch, in document order, for change highlighting.

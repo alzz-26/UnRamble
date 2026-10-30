@@ -139,9 +139,9 @@ const detailsOf = (meta: Meta) =>
 async function generate(ai: GoogleGenAI, format: ReportFormat, notes: string, meta: Meta) {
   if (!notes?.trim()) throw new Failure("Say some notes first.", 400);
   const prompt = `${detailsOf(meta)}\n\nThe student's dictated notes:\n<notes>\n${notes}\n</notes>\n\nWrite the full report.`;
-  const isVit = format.kind === "vit-internship";
-  const { data, model } = await ask(ai, system(format), prompt, isVit ? SCHEMAS.report : SCHEMAS.sections);
-  const parsed = (isVit ? ReportSchema : SectionsReportSchema).safeParse(data);
+  const isInternship = format.kind !== "sections";
+  const { data, model } = await ask(ai, system(format), prompt, isInternship ? SCHEMAS.report : SCHEMAS.sections);
+  const parsed = (isInternship ? ReportSchema : SectionsReportSchema).safeParse(data);
   if (!parsed.success) throw new Failure("The report came back in the wrong shape. Try again.", 502);
   return { report: tidy(parsed.data), model, changes: ["Wrote the full report from all notes"] };
 }
@@ -153,7 +153,7 @@ async function patch(ai: GoogleGenAI, body: Extract<Body, { mode: "patch" }>) {
   const { format, report, meta, instruction, newNotes } = body;
   if (!instruction?.trim() && !newNotes?.trim()) throw new Failure("Nothing new to add.", 400);
 
-  const isVit = format.kind === "vit-internship";
+  const isInternship = format.kind !== "sections";
   const task = [
     newNotes?.trim() &&
       `New notes the student added since this version (fold every fact into the right section; extend the weekly table if there is one; close any gap these notes answer):\n<new_notes>\n${newNotes}\n</new_notes>`,
@@ -163,16 +163,16 @@ async function patch(ai: GoogleGenAI, body: Extract<Body, { mode: "patch" }>) {
     .join("\n\n");
 
   let prompt = `${detailsOf(meta)}\n\nThe current report:\n<report>\n${JSON.stringify(report)}\n</report>\n\n${task}\n\nReturn only what changes. For every part you leave as it is, return null${
-    isVit ? "" : " (and leave it out of \"sections\")"
+    isInternship ? "" : " (and leave it out of \"sections\")"
   }. A part you do change must be returned complete. List each edit in "changes".`;
 
   for (let attempt = 0; attempt < 2; attempt++) {
-    const { data, model } = await ask(ai, system(format), prompt, isVit ? SCHEMAS.reportPatch : SCHEMAS.sectionsPatch);
+    const { data, model } = await ask(ai, system(format), prompt, isInternship ? SCHEMAS.reportPatch : SCHEMAS.sectionsPatch);
     let next: AnyReport | null = null;
     let changes: string[] = [];
     let problem = "";
 
-    if (isVit) {
+    if (isInternship) {
       const p = ReportPatchSchema.safeParse(data);
       if (p.success) {
         next = applyReportPatch(report as Report, p.data);

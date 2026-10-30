@@ -9,13 +9,13 @@ export const DEMO_META: Meta = {
   regNo: "23BCE10XXX",
   degree: "BACHELOR OF TECHNOLOGY",
   branch: "COMPUTER SCIENCE AND ENGINEERING",
-  school: "SCHOOL OF COMPUTING SCIENCE AND ENGINEERING",
-  university: "VIT BHOPAL UNIVERSITY",
+  school: "SCHOOL OF COMPUTER SCIENCE AND ENGINEERING",
+  university: "XYZ COLLEGE",
   academicYear: "2026 – 2027",
   organisation: "XYZ Technologies Pvt. Ltd.",
   duration: "18th May, 2026 to 5th June, 2026",
   guideName: "Dr. PQR",
-  guideDept: "SCOPE",
+  guideDept: "CSE DEPARTMENT",
 };
 
 export const DEMO_NOTES = `okay so week one, this was XYZ, the full stack internship, 18th May was the Monday we started. First day was just onboarding and um setting up Node 20 and VS Code and git, and our mentor is ABC, Mr. ABC, he's a senior dev there. Tuesday was JavaScript refresher, closures, promises, async await. Wednesday React basics, components, props, state, and in the evening lab we made a counter app and a todo app. Thursday was React hooks, useEffect, and the lab was fetching from a public API. Friday Express and Node, REST basics, lab we made a small notes API with Express. Saturday was MongoDB and Mongoose, lab was connecting the notes API to MongoDB Atlas. Sunday off.

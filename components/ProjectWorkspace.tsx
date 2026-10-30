@@ -274,7 +274,7 @@ export default function ProjectWorkspace({ id }: { id: string }) {
                 <span>University logo (image; a placeholder is used until you add one)</span>
                 <input type="file" accept="image/png,image/jpeg" onChange={async (e) => setLogo(e.target.files?.[0] ? await readImage(e.target.files[0]) : null)} />
               </label>
-              {p.format.kind === "vit-internship" && (
+              {p.format.kind === "internship" && (
                 <label>
                   <span>Internship certificate (image, optional)</span>
                   <input type="file" accept="image/png,image/jpeg" onChange={async (e) => setCertificate(e.target.files?.[0] ? await readImage(e.target.files[0]) : null)} />

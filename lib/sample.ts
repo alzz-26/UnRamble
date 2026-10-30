@@ -1,7 +1,7 @@
 "use client";
 
 import { DEMO_META, DEMO_NOTES, DEMO_REPORT } from "./demoData";
-import { VIT_INTERNSHIP } from "./formats";
+import { INTERNSHIP_REPORT } from "./formats";
 import { createProject, listProjects, now, saveProject, uid, type Entry, type Project } from "./store";
 
 const SEEDED_KEY = "report-builder:sample-seeded";
@@ -22,7 +22,7 @@ export function ensureDefaultSample() {
 // A ready-made project for first-time visitors and judges: three weeks of daily
 // notes already turned into a report, plus one new note waiting for the agent.
 export function createSampleProject() {
-  const p = createProject("Sample · Full Stack internship", VIT_INTERNSHIP, DEMO_META);
+  const p = createProject("Sample · Full Stack internship", INTERNSHIP_REPORT, DEMO_META);
   const [week1, week2, week3, wrap] = DEMO_NOTES.split(/\n\n+/);
   const entry = (date: string, text: string): Entry => ({ id: uid(), date, text, kind: "note", createdAt: now() });
   const covered = [

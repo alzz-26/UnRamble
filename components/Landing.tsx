@@ -20,7 +20,7 @@ const PERKS = [
 ];
 
 const FORMATS = [
-  ["Preset", "Internship report", "The full VIT layout, weekly tables included."],
+  ["Preset", "Internship report", "The full college layout, weekly tables included."],
   ["Preset", "Lab record", "Aim to conclusion, one experiment at a time."],
   ["Preset", "Progress report", "For capstone check-ins and guide meetings."],
 ];

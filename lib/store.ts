@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { ReportFormat } from "./formats";
+import { upgradeFormat, type ReportFormat } from "./formats";
 import { EMPTY_META, type AnyReport, type Meta } from "./schema";
 
 // Projects live in this browser for now. Everything goes through this module, so
@@ -51,7 +51,7 @@ export const today = () => {
 function readAll(): Project[] {
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as Project[]) : [];
+    return raw ? (JSON.parse(raw) as Project[]).map((p) => ({ ...p, format: upgradeFormat(p.format) })) : [];
   } catch {
     return [];
   }

@@ -14,7 +14,7 @@ Built for **No Hands: The Wispr Challenge** (Builders track).
 
 | Feature | What it does |
 | --- | --- |
-| Formats | VIT internship report (full layout), lab experiment record, project progress report, or **your own: upload a past .docx** and its headings, font and margins become the format |
+| Formats | Internship report (full college layout), lab experiment record, project progress report, or **your own: upload a past .docx** and its headings, font and margins become the format |
 | Daily log | Dictate what you did today with Wispr; each note is dated and kept. New notes are marked until the report has them |
 | Agent update | Reads only the new notes and the current report, decides which sections to edit, and returns just those edits. The server checks them against the format and sends the agent back once if they don't fit |
 | Fill gaps | The agent's open questions ("What score did you get?"). Answer by voice and it patches the report |
@@ -24,7 +24,7 @@ Built for **No Hands: The Wispr Challenge** (Builders track).
 
 ## The problem
 
-Every VIT Bhopal internship report follows a fixed format: cover, certificate, acknowledgement, a five-part executive summary, learning objectives, a day-by-day weekly overview table, then Introduction, Internship Discussion, Conclusion and Bibliography, all in Times New Roman with a 1.5" left margin and roman page numbers on the front matter. Remembering what you did takes ten minutes. Turning it into formal prose in someone else's template takes hours.
+A college internship report follows a fixed format: cover, certificate, acknowledgement, a five-part executive summary, learning objectives, a day-by-day weekly overview table, then Introduction, Internship Discussion, Conclusion and Bibliography, all in Times New Roman with a 1.5" left margin and roman page numbers on the front matter. Remembering what you did takes ten minutes. Turning it into formal prose in someone else's template takes hours.
 
 ## How it works
 

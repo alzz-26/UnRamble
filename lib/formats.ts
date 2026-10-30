@@ -1,6 +1,6 @@
 import { FORMAT, TEMPLATE_NAME, TEMPLATE_SPEC } from "./template";
 
-// A report format: either the full VIT internship layout (its own rich schema and
+// A report format: either the full college internship layout (its own rich schema and
 // exporter), or a list of headings that the general "sections" engine fills in.
 
 export type PageSetup = {
@@ -19,18 +19,23 @@ export type SectionsFormat = {
   page: PageSetup;
 };
 
-export type VitFormat = { kind: "vit-internship"; id: "vit-internship"; name: string; description: string };
+export type InternshipFormat = { kind: "internship"; id: "internship-report"; name: string; description: string };
 
-export type ReportFormat = VitFormat | SectionsFormat;
+export type ReportFormat = InternshipFormat | SectionsFormat;
 
 const DEFAULT_PAGE: PageSetup = { font: FORMAT.font, bodySize: FORMAT.bodySize, margin: FORMAT.margin };
 
-export const VIT_INTERNSHIP: VitFormat = {
-  kind: "vit-internship",
-  id: "vit-internship",
+export const INTERNSHIP_REPORT: InternshipFormat = {
+  kind: "internship",
+  id: "internship-report",
   name: TEMPLATE_NAME,
   description: "Cover, certificate, executive summary, weekly overview tables, chapters 1–4. Taken from a submitted report.",
 };
+
+// Projects saved before the internship format was renamed still carry its old kind.
+export function upgradeFormat(f: ReportFormat | { kind: string }): ReportFormat {
+  return f.kind === "sections" || f.kind === "internship" ? (f as ReportFormat) : INTERNSHIP_REPORT;
+}
 
 export const LAB_REPORT: SectionsFormat = {
   kind: "sections",
@@ -66,7 +71,7 @@ export const PROGRESS_REPORT: SectionsFormat = {
   page: DEFAULT_PAGE,
 };
 
-export const PRESET_FORMATS: ReportFormat[] = [VIT_INTERNSHIP, LAB_REPORT, PROGRESS_REPORT];
+export const PRESET_FORMATS: ReportFormat[] = [INTERNSHIP_REPORT, LAB_REPORT, PROGRESS_REPORT];
 
 export function sectionsSpec(f: SectionsFormat): string {
   return `FORMAT: ${f.name}.
@@ -78,7 +83,7 @@ Each section has paragraphs (with an optional bold run-in lead), an optional num
 }
 
 export function formatSpec(f: ReportFormat): string {
-  return f.kind === "vit-internship" ? TEMPLATE_SPEC : sectionsSpec(f);
+  return f.kind === "sections" ? sectionsSpec(f) : TEMPLATE_SPEC;
 }
 
 export function newFormatId() {
