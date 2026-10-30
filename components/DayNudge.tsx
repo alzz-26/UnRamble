@@ -5,10 +5,13 @@ import { DEFAULT_REMINDER, downloadIcs, googleCalendarUrl, loggedToday, streak, 
 import type { Project } from "@/lib/store";
 
 // Above the composer: did you log today, how long is the streak, and a one-tap
-// daily reminder that goes into the student's own calendar.
-export default function DayNudge({ project, onSave }: { project: Project; onSave: (r: Reminder) => void }) {
+// daily reminder that goes into the student's own calendar. The calendar only
+// creates the event when the student presses Save there, which this page can't
+// see, so the reminder is shown as set only after they confirm it.
+export default function DayNudge({ project, onSave }: { project: Project; onSave: (r: Reminder | undefined) => void }) {
   const [open, setOpen] = useState(false);
   const [r, setR] = useState<Reminder>(project.reminder ?? DEFAULT_REMINDER);
+  const [asking, setAsking] = useState(false);
   const done = loggedToday(project);
   const days = streak(project);
   const url = typeof window === "undefined" ? "" : window.location.href;
@@ -43,7 +46,7 @@ export default function DayNudge({ project, onSave }: { project: Project; onSave
               href={googleCalendarUrl(project, r, url)}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => onSave(r)}
+              onClick={() => setAsking(true)}
             >
               Add to Google Calendar
             </a>
@@ -51,12 +54,40 @@ export default function DayNudge({ project, onSave }: { project: Project; onSave
               className="btn-ghost"
               onClick={() => {
                 downloadIcs(project, r, url);
-                onSave(r);
+                setAsking(true);
               }}
             >
               Apple / Outlook (.ics)
             </button>
           </div>
+          {asking ? (
+            <div className="nudge-confirm">
+              <span className="small">Did you press Save in your calendar?</span>
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  onSave(r);
+                  setAsking(false);
+                  setOpen(false);
+                }}
+              >
+                Yes, it&apos;s saved
+              </button>
+              <button className="link-btn" onClick={() => setAsking(false)}>
+                Not yet
+              </button>
+            </div>
+          ) : (
+            project.reminder && (
+              <p className="muted small nudge-note">
+                To stop it, delete the event in your calendar, then{" "}
+                <button className="link-btn" onClick={() => onSave(undefined)}>
+                  clear it here
+                </button>
+                .
+              </p>
+            )
+          )}
           <p className="muted small nudge-note">
             It rings on your phone like any calendar event and opens this project, so logging takes a minute while you still
             remember the day.
