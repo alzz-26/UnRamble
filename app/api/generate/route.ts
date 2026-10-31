@@ -165,7 +165,7 @@ async function patch(ai: GoogleGenAI, body: Extract<Body, { mode: "patch" }>) {
 
   let prompt = `${detailsOf(meta)}\n\nThe current report:\n<report>\n${JSON.stringify(report)}\n</report>\n\n${task}\n\nReturn only what changes. For every part you leave as it is, return null${
     isInternship ? "" : " (and leave it out of \"sections\")"
-  }. A part you do change must be returned complete. List each edit in "changes".`;
+  }. A part you do change must be returned complete. List each edit in "changes", copying dates, numbers and names exactly as the report now states them.`;
 
   for (let attempt = 0; attempt < 2; attempt++) {
     const { data, model } = await ask(ai, system(format), prompt, isInternship ? SCHEMAS.reportPatch : SCHEMAS.sectionsPatch);
