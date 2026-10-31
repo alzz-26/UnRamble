@@ -1,4 +1,5 @@
 import type { Meta, Report, ReportPara, ReportTable, SectionKey } from "@/lib/schema";
+import { RichPara } from "./Rich";
 
 const ORDINAL = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"];
 
@@ -185,7 +186,7 @@ export default function ReportPreview({ meta, report, changed, logoSrc }: Props)
               </h3>
               {i === 0 && s.table && <Table t={s.table} n={nextTable()} />}
               {s.paragraphs.map((p, pi) => (
-                <Para key={pi} p={p} />
+                <RichPara key={pi} p={p} />
               ))}
               {i !== 0 && s.table && <Table t={s.table} n={nextTable()} />}
               {s.code && (

@@ -414,3 +414,8 @@ kbd { font-family: var(--mono); font-size: 11.5px; background: var(--accent-soft
 .live-hint { margin: -2px 2px 0; line-height: 1.45; }
 .elapsed { font-family: var(--mono); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
 .agent-status .elapsed { margin-left: 6px; opacity: 0.8; }
+
+/* Inline code and screenshot boxes: the Word exporter draws the same (lib/rich.ts) */
+.r-icode { font-family: Consolas, "Courier New", monospace; font-size: 0.92em; }
+.r-shot { border: 1.5px dashed #999; min-height: 120px; margin: 6px 0 12px; display: grid; place-items: center; color: #808080; font-style: italic; font-size: 13px; text-align: center; padding: 8px; }
+.r-shot-li { list-style: none; margin-left: -22px; }

@@ -12,15 +12,18 @@ import {
   PageNumber,
   PageReference,
   Paragraph,
+  HeightRule,
   ShadingType,
   Table,
   TableCell,
   TableRow,
   TextRun,
+  VerticalAlign,
   VerticalMergeType,
   WidthType,
 } from "docx";
-import type { Meta, Report, ReportPara, ReportTable, SectionsReport } from "./schema";
+import { codeSpans, shotLabel } from "./rich";
+import { alignSections, sectionByHeading, type Meta, type Report, type ReportPara, type ReportTable, type SectionsReport } from "./schema";
 import type { SectionsFormat } from "./formats";
 import { FORMAT as F } from "./template";
 
@@ -38,22 +41,61 @@ const p = (text: string, opts: { bold?: boolean; size?: number; align?: (typeof 
 const centred = (text: string, size?: number, bold = true, after?: number) =>
   p(text, { bold, size, align: AlignmentType.CENTER, after });
 
+// Text with `code` in backticks set in a code font.
+const textRuns = (text: string) =>
+  codeSpans(text).map((s) => (s.code ? new TextRun({ text: s.text, font: "Consolas", size: 21 }) : new TextRun(s.text)));
+
+// An empty dashed box with its label, for the student to paste a screenshot into.
+const shotBox = (label: string) => {
+  const dashed = { style: BorderStyle.DASHED, size: 6, color: "999999" };
+  return [
+    new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      rows: [
+        new TableRow({
+          height: { value: 2600, rule: HeightRule.ATLEAST },
+          children: [
+            new TableCell({
+              verticalAlign: VerticalAlign.CENTER,
+              borders: { top: dashed, bottom: dashed, left: dashed, right: dashed },
+              children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: label, italics: true, color: "808080", size: 20 })] })],
+            }),
+          ],
+        }),
+      ],
+    }),
+    new Paragraph({ children: [], spacing: { after: 120 } }),
+  ];
+};
+
 const para = (x: ReportPara) =>
   new Paragraph({
     alignment: AlignmentType.JUSTIFIED,
-    children: [...(x.lead ? [new TextRun({ text: `${x.lead} `, bold: true })] : []), new TextRun(x.text)],
+    children: [...(x.lead ? [new TextRun({ text: `${x.lead} `, bold: true })] : []), ...textRuns(x.text)],
   });
 
-const numbered = (items: string[]) =>
-  items.map(
-    (t, i) =>
+const block = (x: ReportPara) => {
+  const shot = x.lead ? null : shotLabel(x.text);
+  return shot ? shotBox(shot) : [para(x)];
+};
+
+// Numbered list; a screenshot placeholder between steps becomes a box and doesn't take a number.
+const numbered = (items: string[]) => {
+  let n = 0;
+  return items.flatMap((t) => {
+    const shot = shotLabel(t);
+    if (shot) return shotBox(shot);
+    n++;
+    return [
       new Paragraph({
-        alignment: AlignmentType.JUSTIFIED,
+        alignment: AlignmentType.LEFT,
         indent: { left: 360, hanging: 360 },
-        children: [new TextRun(`${i + 1}.\t${t}`)],
+        children: [new TextRun(`${n}.\t`), ...textRuns(t)],
         tabStops: [{ type: "left", position: 360 }],
       }),
-  );
+    ];
+  });
+};
 
 const h1 = (text: string, bookmark: string, pageBreak = true) =>
   new Paragraph({
@@ -306,7 +348,7 @@ export async function buildDocx(
     ...r.discussion.flatMap((s, i) => [
       h2(`2.${i + 1} ${s.title}`, `ch2_${i + 1}`),
       ...(i === 0 && s.table ? table(s.table, ++tableNo) : []),
-      ...s.paragraphs.map(para),
+      ...s.paragraphs.flatMap(block),
       ...(i !== 0 && s.table ? table(s.table, ++tableNo) : []),
       ...(s.code
         ? [
@@ -375,7 +417,7 @@ export async function buildSectionsDocx(
   logo?: Certificate | null,
 ): Promise<Blob> {
   let tableNo = 0;
-  const byHeading = new Map(r.sections.map((s) => [s.heading.toLowerCase(), s]));
+  const sectionFor = sectionByHeading(alignSections(r, format.sections.map((s) => s.heading)));
 
   const titlePage = [
     ...(logo
@@ -400,14 +442,14 @@ export async function buildSectionsDocx(
   ];
 
   const body = format.sections.flatMap((f, i) => {
-    const s = byHeading.get(f.heading.toLowerCase());
+    const s = sectionFor(f.heading);
     return [
       new Paragraph({
         heading: HeadingLevel.HEADING_2,
         pageBreakBefore: i === 0,
         children: [new TextRun(`${i + 1}. ${f.heading.toUpperCase()}`)],
       }),
-      ...(s ? s.paragraphs.map(para) : []),
+      ...(s ? s.paragraphs.flatMap(block) : []),
       ...(s ? numbered(s.items) : []),
       ...(s?.table ? table(s.table, ++tableNo) : []),
     ];

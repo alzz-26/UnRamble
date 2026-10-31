@@ -1,5 +1,6 @@
 import type { SectionsFormat } from "@/lib/formats";
-import type { Meta, SectionsReport } from "@/lib/schema";
+import { alignSections, sectionByHeading, type Meta, type SectionsReport } from "@/lib/schema";
+import { RichList, RichPara } from "./Rich";
 
 type Props = { format: SectionsFormat; meta: Meta; report: SectionsReport; changed: string[]; logoSrc: string };
 
@@ -7,7 +8,7 @@ type Props = { format: SectionsFormat; meta: Meta; report: SectionsReport; chang
 // then one numbered heading per section of the format.
 export default function SectionsPreview({ format, meta, report, changed, logoSrc }: Props) {
   let tableNo = 0;
-  const byHeading = new Map(report.sections.map((s) => [s.heading.toLowerCase(), s]));
+  const sectionFor = sectionByHeading(alignSections(report, format.sections.map((s) => s.heading)));
   const isChanged = (h: string) => changed.some((c) => c.toLowerCase() === h.toLowerCase());
 
   return (
@@ -33,7 +34,7 @@ export default function SectionsPreview({ format, meta, report, changed, logoSrc
       </div>
 
       {format.sections.map((f, i) => {
-        const s = byHeading.get(f.heading.toLowerCase());
+        const s = sectionFor(f.heading);
         const empty = !s || (s.paragraphs.length === 0 && s.items.length === 0 && !s.table);
         const gaps = report.gaps.filter((g) => g.section.toLowerCase().includes(f.heading.toLowerCase()));
         return (
@@ -42,19 +43,8 @@ export default function SectionsPreview({ format, meta, report, changed, logoSrc
             <h3 className="r-h-left">
               {i + 1}. {f.heading.toUpperCase()}
             </h3>
-            {s?.paragraphs.map((p, pi) => (
-              <p key={pi}>
-                {p.lead && <b>{p.lead} </b>}
-                {p.text}
-              </p>
-            ))}
-            {s && s.items.length > 0 && (
-              <ol>
-                {s.items.map((it, ii) => (
-                  <li key={ii}>{it}</li>
-                ))}
-              </ol>
-            )}
+            {s?.paragraphs.map((p, pi) => <RichPara key={pi} p={p} />)}
+            {s && s.items.length > 0 && <RichList items={s.items} />}
             {s?.table && (
               <>
                 <p className="r-caption">
