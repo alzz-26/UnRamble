@@ -101,7 +101,7 @@ async function ask(ai: GoogleGenAI, sys: string, prompt: string, schema: unknown
         if ([404, 429, 500, 503].includes(err.status)) {
           lastError =
             err.status === 429
-              ? "The free Gemini quota is used up for now. Wait a minute, or try again tomorrow."
+              ? "This site runs on Gemini's free tier, and its shared quota is used up for now. Wait a minute and try again; the sample project's report can still be read and downloaded."
               : `Gemini is unavailable right now (${err.status}).`;
           continue;
         }

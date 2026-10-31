@@ -17,6 +17,7 @@ export async function callApi<T = ApiResult>(body: object): Promise<T> {
     body: JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));
+  if (res.status === 504) throw new Error("The AI took longer than the server allows (5 min). Please try again; it's usually faster the second time.");
   if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
   return data as T;
 }
