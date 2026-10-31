@@ -5,6 +5,7 @@
 Live: **https://un-ramble-ten.vercel.app**
 
 ---
+> 🎙️ **About this README:** I spoke it with Wispr Flow, then Claude tidied the grammar and formatting and corrected a few technical details. The story and the points are my own words.
 
 ## The problem, as my own story
 
@@ -107,5 +108,3 @@ npm run dev
 ---
 
 Made for **No Hands: The Wispr Challenge** (WeMakeDevs × Wispr Flow) by Alisha Basa.
-
-> 🎙️ **About this README:** I spoke it with Wispr Flow, then Claude tidied the grammar and formatting and corrected a few technical details. The story and the points are my own words.
