@@ -54,7 +54,7 @@ Import the repository, add `GEMINI_API_KEY` under Environment Variables, and dep
 | --- | --- |
 | `lib/template.ts` | The department format: writing rules for the model and page measurements for the exporter, taken from a real submitted report |
 | `lib/schema.ts` | The report as structured data (Zod), so revisions touch one section and gaps can be flagged |
-| `app/api/generate/route.ts` | Server route: generate or revise with Gemini (free tier: `gemini-flash-latest`, then `gemini-3.8-flash`, `gemini-3.6-flash` and `gemini-flash-lite-latest` as backups if a quota runs out), using a JSON schema for the output |
+| `app/api/generate/route.ts` | Server route: generate or revise with Gemini (free tier: `gemini-3.8-flash`, then `gemini-3.6-flash`, `gemini-flash-lite-latest` and `gemini-flash-latest` as backups if a quota runs out), using a JSON schema for the output |
 | `components/Builder.tsx` | Notes box, preview, revision box, export |
 | `lib/exportDocx.ts` | Builds the Word file with the `docx` package |
 | `lib/demoData.ts` | Demo notes, report and revision |

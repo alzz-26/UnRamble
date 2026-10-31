@@ -18,8 +18,9 @@ import { formatSpec, type ReportFormat } from "@/lib/formats";
 export const maxDuration = 300;
 
 // Free-tier Gemini models, tried in order: if the first is over its quota or
-// unavailable, the next one takes the request.
-const MODELS = (process.env.GEMINI_MODEL || "gemini-flash-latest,gemini-3.8-flash,gemini-3.6-flash,gemini-flash-lite-latest")
+// unavailable, the next one takes the request. Named versions go first: the
+// "-latest" alias answered the same request about ten times slower.
+const MODELS = (process.env.GEMINI_MODEL || "gemini-3.8-flash,gemini-3.6-flash,gemini-flash-lite-latest,gemini-flash-latest")
   .split(",")
   .map((m) => m.trim())
   .filter(Boolean);
