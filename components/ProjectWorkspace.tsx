@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import AppHeader from "./AppHeader";
 import ConfirmButton from "./ConfirmButton";
 import DayNudge from "./DayNudge";
+import Elapsed from "./Elapsed";
 import FormatPicker from "./FormatPicker";
 import ReportView, { changedParts, partLabel } from "./ReportView";
 import { callApi, downloadReport, PLACEHOLDER_LOGO, readImage } from "@/lib/client";
@@ -246,6 +247,18 @@ export default function ProjectWorkspace({ id }: { id: string }) {
           <button className="btn-primary btn-wide" onClick={() => runAgent()} disabled={!!busy || p.entries.length === 0 || (!!latest && pending.length === 0)}>
             {busy === "agent" || busy === "full" ? status : agentLabel}
           </button>
+          <p className="muted small live-hint">
+            {busy === "agent" || busy === "full" ? (
+              <Elapsed />
+            ) : p.sample && latest && pending.length > 0 ? (
+              <>
+                <b>Try it live:</b> one new note is waiting. Press the button and watch the agent edit only what that note
+                changes. Takes 1–2 min on Gemini&apos;s free tier.
+              </>
+            ) : (
+              "Live AI on Gemini's free tier: about 1–2 min per update. You can keep reading meanwhile."
+            )}
+          </p>
           <EntryList
             entries={p.entries}
             pendingIds={new Set(latest ? pending.map((e) => e.id) : [])}
@@ -335,7 +348,11 @@ export default function ProjectWorkspace({ id }: { id: string }) {
 
           <div className="preview-scroll" ref={previewRef}>
             {(busy === "full" || busy === "agent") && !shown && <div className="paper skeleton" aria-busy="true" />}
-            {busy && shown && <div className="agent-status">{status}</div>}
+            {busy && busy !== "export" && shown && (
+              <div className="agent-status">
+                {status} <Elapsed />
+              </div>
+            )}
             {!shown && !busy && (
               <div className="empty">
                 <p className="empty-title">No report yet</p>

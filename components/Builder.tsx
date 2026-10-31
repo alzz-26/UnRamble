@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AppHeader from "./AppHeader";
+import Elapsed from "./Elapsed";
 import ReportView, { changedParts, partLabel } from "./ReportView";
 import FormatPicker from "./FormatPicker";
 import { EMPTY_META, type AnyReport, type Meta } from "@/lib/schema";
@@ -232,7 +233,9 @@ export default function Builder({ demo = false }: { demo?: boolean }) {
             spellCheck={false}
           />
           <div className="row">
-            <span className="muted small">{notes.trim() ? `${notes.trim().split(/\s+/).length} words` : "No notes yet"}</span>
+            <span className="muted small">
+              {busy === "generate" ? <Elapsed /> : notes.trim() ? `${notes.trim().split(/\s+/).length} words` : "No notes yet"}
+            </span>
             <button className="btn-primary" onClick={generate} disabled={!!busy || !notes.trim()}>
               {busy === "generate" ? "Writing your report (1–2 min)…" : report ? "Regenerate report" : "Generate report"}
             </button>

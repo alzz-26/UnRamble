@@ -411,3 +411,6 @@ kbd { font-family: var(--mono); font-size: 11.5px; background: var(--accent-soft
 .nudge-note { margin: 0; }
 .pill-warn { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid var(--warn-line); }
 .nudge-confirm { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.live-hint { margin: -2px 2px 0; line-height: 1.45; }
+.elapsed { font-family: var(--mono); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.agent-status .elapsed { margin-left: 6px; opacity: 0.8; }
