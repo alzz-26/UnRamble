@@ -1,8 +1,10 @@
 import { ApiError, GoogleGenAI, ThinkingLevel } from "@google/genai";
 import { z } from "zod";
 import {
+  alignSections,
   applyReportPatch,
   applySectionsPatch,
+  headingKey,
   ReportPatchSchema,
   ReportSchema,
   SectionsPatchSchema,
@@ -33,7 +35,9 @@ const RULES = `Rules that matter more than polish:
 - The notes are dictated, so they are out of order, repeat themselves and contain filler ("um", "so basically", corrections like "no wait, it was port 8081"). Use the corrected version and drop the filler.
 - Put every fact in the section where the format says it belongs, even if it was said in passing.
 - Write in the format's formal style; keep the student's technical detail.
-- vivaQuestions: questions an examiner would ask about this specific work, not generic ones.`;
+- vivaQuestions: questions an examiner would ask about this specific work, not generic ones.
+- Follow instructions the student gives inside the notes. If they ask you to explain steps or commands, write the standard steps and commands for the tools they name (that is textbook knowledge, not invention), but never invent their outputs or results. If they ask for space for screenshots or outputs, put a placeholder right after each relevant step, as its own list item (or paragraph), written exactly like "[Insert screenshot: output of git stash]"; it becomes an empty box to paste into.
+- Wrap commands, code, file names and paths in backticks, e.g. \`git stash\`; they are set in a code font.`;
 
 const system = (format: ReportFormat) =>
   `You turn a student's spoken, rambling notes into a college report in their department's exact format, and keep that report up to date as they add notes.\n\n${formatSpec(format)}\n\n${RULES}`;
@@ -57,6 +61,15 @@ const SCHEMAS = {
     }),
   ),
 };
+
+// For section-based formats, pin "heading" to the format's own headings so the
+// model can't hand back "1. Aim" or "AIM:" where the format says "Aim".
+function sectionsSchema(schema: unknown, format: ReportFormat) {
+  if (format.kind !== "sections") return schema;
+  const copy = structuredClone(schema) as { properties: { sections: { items: { properties: { heading: object } } } } };
+  copy.properties.sections.items.properties.heading = { type: "string", enum: format.sections.map((s) => s.heading) };
+  return copy;
+}
 
 type Body =
   | { mode: "generate"; format: ReportFormat; notes: string; meta: Meta }
@@ -141,10 +154,11 @@ async function generate(ai: GoogleGenAI, format: ReportFormat, notes: string, me
   if (!notes?.trim()) throw new Failure("Say some notes first.", 400);
   const prompt = `${detailsOf(meta)}\n\nThe student's dictated notes:\n<notes>\n${notes}\n</notes>\n\nWrite the full report.`;
   const isInternship = format.kind !== "sections";
-  const { data, model } = await ask(ai, system(format), prompt, isInternship ? SCHEMAS.report : SCHEMAS.sections);
+  const { data, model } = await ask(ai, system(format), prompt, isInternship ? SCHEMAS.report : sectionsSchema(SCHEMAS.sections, format));
   const parsed = (isInternship ? ReportSchema : SectionsReportSchema).safeParse(data);
   if (!parsed.success) throw new Failure("The report came back in the wrong shape. Try again.", 502);
-  return { report: tidy(parsed.data), model, changes: ["Wrote the full report from all notes"] };
+  const report = format.kind === "sections" ? alignSections(parsed.data as SectionsReport, format.sections.map((s) => s.heading)) : parsed.data;
+  return { report: tidy(report), model, changes: ["Wrote the full report from all notes"] };
 }
 
 // The agent step: read the current report and what's new, decide which sections to
@@ -168,7 +182,7 @@ async function patch(ai: GoogleGenAI, body: Extract<Body, { mode: "patch" }>) {
   }. A part you do change must be returned complete. List each edit in "changes", copying dates, numbers and names exactly as the report now states them.`;
 
   for (let attempt = 0; attempt < 2; attempt++) {
-    const { data, model } = await ask(ai, system(format), prompt, isInternship ? SCHEMAS.reportPatch : SCHEMAS.sectionsPatch);
+    const { data, model } = await ask(ai, system(format), prompt, isInternship ? SCHEMAS.reportPatch : sectionsSchema(SCHEMAS.sectionsPatch, format));
     let next: AnyReport | null = null;
     let changes: string[] = [];
     let problem = "";
@@ -184,10 +198,10 @@ async function patch(ai: GoogleGenAI, body: Extract<Body, { mode: "patch" }>) {
       const p = SectionsPatchSchema.safeParse(data);
       if (p.success) {
         const order = format.sections.map((s) => s.heading);
-        const unknown = p.data.sections.filter((s) => !order.some((h) => h.toLowerCase() === s.heading.toLowerCase()));
+        const unknown = p.data.sections.filter((s) => !order.some((h) => headingKey(h) === headingKey(s.heading)));
         if (unknown.length) problem = `these headings are not in the format: ${unknown.map((s) => s.heading).join(", ")}`;
         else {
-          next = applySectionsPatch(report as SectionsReport, p.data, order);
+          next = applySectionsPatch(alignSections(report as SectionsReport, order), p.data, order);
           changes = p.data.changes;
         }
       } else problem = "the edits were not in the expected shape";

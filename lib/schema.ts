@@ -175,11 +175,36 @@ export function applyReportPatch(r: Report, p: ReportPatch): Report {
   return next;
 }
 
+// Headings compared loosely: "1. Aim", "AIM:" and "Aim" are the same section.
+export const headingKey = (h: string) =>
+  h
+    .toLowerCase()
+    .replace(/^\s*(\d+|[ivxlc]+)\s*[.)\-:]\s*/, "")
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+// Give every section the format's own heading, so lookups by heading never miss.
+// A section that matches no heading takes its place in order when the counts line up.
+export function alignSections(r: SectionsReport, order: string[]): SectionsReport {
+  const byKey = new Map(order.map((h) => [headingKey(h), h]));
+  const sameShape = r.sections.length === order.length;
+  return {
+    ...r,
+    sections: r.sections.map((s, i) => ({ ...s, heading: byKey.get(headingKey(s.heading)) ?? (sameShape ? order[i] : s.heading) })),
+  };
+}
+
+export function sectionByHeading(r: SectionsReport) {
+  const m = new Map(r.sections.map((s) => [headingKey(s.heading), s]));
+  return (heading: string) => m.get(headingKey(heading));
+}
+
 export function applySectionsPatch(r: SectionsReport, p: SectionsPatch, order: string[]): SectionsReport {
-  const byHeading = new Map(r.sections.map((s) => [s.heading.toLowerCase(), s]));
-  for (const s of p.sections) byHeading.set(s.heading.toLowerCase(), s);
-  const known = order.map((h) => byHeading.get(h.toLowerCase())).filter((s): s is ReportSection => !!s);
-  const extra = [...byHeading.values()].filter((s) => !order.some((h) => h.toLowerCase() === s.heading.toLowerCase()));
+  const byHeading = new Map(r.sections.map((s) => [headingKey(s.heading), s]));
+  for (const s of p.sections) byHeading.set(headingKey(s.heading), s);
+  const known = order.map((h) => byHeading.get(headingKey(h))).filter((s): s is ReportSection => !!s);
+  const extra = [...byHeading.values()].filter((s) => !order.some((h) => headingKey(h) === headingKey(s.heading)));
   return {
     sections: [...known, ...extra],
     gaps: p.gaps ?? r.gaps,
