@@ -3,6 +3,7 @@
 **Ramble all week. Submit on Friday.**
 
 Live: **https://un-ramble-ten.vercel.app**
+Demo Video: **https://youtu.be/8avUYBCPHPg**
 
 ---
 > 🎙️ **About this README:** I spoke it with Wispr Flow, then Claude tidied the grammar and formatting and corrected a few technical details. The story and the points are my own words.
